@@ -69,10 +69,9 @@ IF(DEFINED RAVE)
 
 	SET (CMAKE_CXX_FLAGS ${RAVE_CFLAGS_STR})
 	
-	SET(GF_INC_DIRS
-		./GFRave/include/
-	)
-	
+ 	SET(GF_INC_DIRS ./GFRave/include/ ${Rave_INCLUDE_DIRS_STR})
+ 	SET(IN_INC_DIRS ./GFRave/include/)
+ 
 	AUX_SOURCE_DIRECTORY( ./GFRave/src  library_sources )
 ENDIF()
 
@@ -89,9 +88,20 @@ SET(GF_INC_DIRS
 		./utilities/include/
 		${GF_INC_DIRS}
 )
+SET(IN_INC_DIRS
+		./core/include/
+		./eventDisplay/include/
+		./fields/include/
+		./finitePlanes/include/
+		./fitters/include/
+		./GBL/include/
+		./measurements/include/
+		./trackReps/include/
+		./utilities/include/
+)
 
-INSTALL(DIRECTORY ${GF_INC_DIRS}
-        DESTINATION ${INCLUDE_OUTPUT_DIRECTORY}
+INSTALL(DIRECTORY ${IN_INC_DIRS}
+        DESTINATION ${INCLUDE_OUTPUT_DIRECTORY}/${PROJECT_NAME}
         PATTERN ".svn" EXCLUDE)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -301,7 +311,7 @@ if(DEFINED RAVE)
 			${PROJECT_NAME}
 			${ROOT_LIBS}
 			${RAVE_LDFLAGS_STR}
-			-I${RAVE_INCLUDE_DIRS_I}
+      ${Rave_LIB}
   	)
 else()
 	TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROOT_LIBS})
