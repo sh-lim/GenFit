@@ -43,17 +43,18 @@ FIND_PACKAGE(Eigen3 REQUIRED)
 
 
 IF(DEFINED ENV{RAVEPATH})
-	MESSAGE("Environment variable RAVEPATH is set. Try to build GFRave.") 
+	MESSAGE(STATUS "Environment variable RAVEPATH is set. Try to build GFRave.")
 	# get compiler flags from rave
 	INCLUDE(FindPkgConfig)
 	SET(ENV{PKG_CONFIG_PATH} $ENV{RAVEPATH})
-	pkg_search_module(RAVE REQUIRED)
-	
+	#pkg_search_module(Rave REQUIRED)
+	find_package(Rave REQUIRED)
+
 	SET(RAVE True)
-ELSEIF(DEFINED RAVE_LDFLAGS)
-	IF(DEFINED RAVE_INCLUDE_DIRS)
-		IF(DEFINED RAVE_CFLAGS)
-			MESSAGE("RAVE_LDFLAGS, RAVE_INCLUDE_DIRS and RAVE_CFLAGS are set. Try to build GFRave.") 
+ELSEIF(DEFINED Rave_LDFLAGS)
+	IF(DEFINED Rave_INCLUDE_DIRS)
+		IF(DEFINED Rave_CFLAGS)
+			MESSAGE(STATUS "Rave_LDFLAGS, Rave_INCLUDE_DIRS and Rave_CFLAGS are set. Try to build GFRave.")
 			SET(RAVE True)
 		ENDIF()
 	ENDIF()
@@ -63,15 +64,15 @@ ENDIF()
 
 IF(DEFINED RAVE)
 	# turn comma separated lists into space separated strings
-	string (REPLACE ";" " " RAVE_LDFLAGS_STR "${RAVE_LDFLAGS}")
-	string (REPLACE ";" " " RAVE_INCLUDE_DIRS_STR "${RAVE_INCLUDE_DIRS}")
-	string (REPLACE ";" " " RAVE_CFLAGS_STR "${RAVE_CFLAGS}")
+	string (REPLACE ";" " " Rave_LDFLAGS_STR "${Rave_LDFLAGS}")
+	string (REPLACE ";" " " Rave_INCLUDE_DIRS_STR "${Rave_INCLUDE_DIRS}")
+	string (REPLACE ";" " " Rave_CFLAGS_STR "${Rave_CFLAGS}")
 
-	SET (CMAKE_CXX_FLAGS ${RAVE_CFLAGS_STR})
-	
- 	SET(GF_INC_DIRS ./GFRave/include/ ${Rave_INCLUDE_DIRS_STR})
- 	SET(IN_INC_DIRS ./GFRave/include/)
- 
+	SET (CMAKE_CXX_FLAGS ${Rave_CFLAGS_STR})
+	SET (CMAKE_CXX_FLAGS ${Rave_DEFINITIONS} ${Rave_CFLAGS_STR})
+	SET(GF_INC_DIRS ./GFRave/include/ ${Rave_INCLUDE_DIRS_STR})
+	SET(IN_INC_DIRS ./GFRave/include/ ${Rave_INCLUDE_DIRS_STR})
+
 	AUX_SOURCE_DIRECTORY( ./GFRave/src  library_sources )
 ENDIF()
 
@@ -98,6 +99,7 @@ SET(IN_INC_DIRS
 		./measurements/include/
 		./trackReps/include/
 		./utilities/include/
+    ${Rave_INCLUDE_DIRS}/rave
 )
 
 INSTALL(DIRECTORY ${IN_INC_DIRS}
@@ -260,6 +262,7 @@ SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/measurementsRootDict.cc" "${lib
 
 SET(TRACKREPS_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include/RKTrackRep.h
+		#${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include/MplTrackRep.h
 )
 ROOT_GENERATE_DICTIONARY(
 		"${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}"
@@ -294,7 +297,7 @@ if(DEFINED RAVE)
 			"${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}"
 			"${GFRAVE_DICTIONARY_SOURCES}"
 			"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/GFRave/include"
- 			"${CMAKE_CURRENT_SOURCE_DIR}/GFRave/src/GFRaveLinkDef.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/GFRave/src/GFRaveLinkDef.h"
 			"${CMAKE_CURRENT_BINARY_DIR}/GFRaveRootDict.cc"
 	)
 	SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/GFRaveRootDict.cc" "${library_sources}")
@@ -310,6 +313,7 @@ if(DEFINED RAVE)
 	TARGET_LINK_LIBRARIES(
 			${PROJECT_NAME}
 			${ROOT_LIBS}
+			${RAVE_LDFLAGS_STR}
       ${Rave_LIB}
   	)
 else()
