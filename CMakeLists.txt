@@ -47,7 +47,7 @@ IF(DEFINED ENV{RAVEPATH})
 	# get compiler flags from rave
 	INCLUDE(FindPkgConfig)
 	SET(ENV{PKG_CONFIG_PATH} $ENV{RAVEPATH})
-	pkg_search_module(RAVE rave REQUIRED)
+	pkg_search_module(RAVE REQUIRED)
 	
 	SET(RAVE True)
 ELSEIF(DEFINED RAVE_LDFLAGS)
@@ -294,7 +294,7 @@ if(DEFINED RAVE)
 			"${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}"
 			"${GFRAVE_DICTIONARY_SOURCES}"
 			"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/GFRave/include"
-			"${CMAKE_CURRENT_SOURCE_DIR}/GFRave/src/GFRaveLinkDef.h"
+ 			"${CMAKE_CURRENT_SOURCE_DIR}/GFRave/src/GFRaveLinkDef.h"
 			"${CMAKE_CURRENT_BINARY_DIR}/GFRaveRootDict.cc"
 	)
 	SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/GFRaveRootDict.cc" "${library_sources}")
@@ -310,7 +310,6 @@ if(DEFINED RAVE)
 	TARGET_LINK_LIBRARIES(
 			${PROJECT_NAME}
 			${ROOT_LIBS}
-			${RAVE_LDFLAGS_STR}
       ${Rave_LIB}
   	)
 else()
