@@ -49,6 +49,7 @@ IF(DEFINED ENV{RAVEPATH})
 	SET(ENV{PKG_CONFIG_PATH} $ENV{RAVEPATH})
 	#pkg_search_module(Rave REQUIRED)
 	find_package(Rave REQUIRED)
+	find_package(Boost REQUIRED)
 
 	SET(RAVE True)
 ELSEIF(DEFINED Rave_LDFLAGS)
@@ -88,6 +89,7 @@ SET(GF_INC_DIRS
 		./trackReps/include/
 		./utilities/include/
 		${GF_INC_DIRS}
+		${Boost_INCLUDE_DIRS}
 )
 SET(IN_INC_DIRS
 		./core/include/
